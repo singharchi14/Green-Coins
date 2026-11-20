@@ -1,0 +1,228 @@
+/* =====================================================================
+   PORTAL THEME (green + yellow)  ·  Citizen / Worker / Municipal / Shop / Admin
+   Everything here is scoped under .portal, so Login, Register (OTP)
+   and the landing pages keep their existing look.
+   To roll back: remove the `portal` wrapper div in the page files
+   (or delete the import of this file in app/layout.js).
+   ===================================================================== */
+
+.portal{
+  --ink:#0f3322; --mut:#4b6755; --g:#0f6b42; --gd:#0a5233; --y:#f2bd2c;
+  --line:#cfe1bd; --soft:#f1f8dd; --err:#b3261e;
+  --leaf:#2a9d46; --lime:#c6e24a; --sun:#f7d54a; --onbg:#e6f7cc;
+  --card:rgba(255,252,236,.96); --card-b:rgba(255,255,255,.55);
+  --shadow:0 16px 34px -16px rgba(4,40,24,.55),0 2px 6px rgba(4,40,24,.12);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --head:'Plus Jakarta Sans',var(--font),system-ui,sans-serif;
+  position:relative;isolation:isolate;min-height:100vh;color:#fff;
+  background:linear-gradient(160deg,#0c6b41 0%,#12804a 48%,#228a3e 100%);
+}
+
+/* ---------- ambient background: yellow + lime glow drifting on green ---------- */
+.portal::before{content:"";position:fixed;inset:-15%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(36vmax 36vmax at 92% 2%,rgba(247,213,74,.75),transparent 62%),
+    radial-gradient(40vmax 40vmax at 2% 30%,rgba(198,226,74,.42),transparent 62%),
+    radial-gradient(44vmax 44vmax at 70% 100%,rgba(247,213,74,.45),transparent 62%);
+  animation:pt-drift 22s ease-in-out infinite alternate}
+.portal::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.20) 1.2px,transparent 1.5px);background-size:28px 28px;
+  -webkit-mask-image:radial-gradient(ellipse 85% 60% at 50% 0%,#000 15%,transparent 75%);
+  mask-image:radial-gradient(ellipse 85% 60% at 50% 0%,#000 15%,transparent 75%)}
+
+/* ---------- header ---------- */
+.portal .top{position:sticky;top:0;z-index:20;flex-wrap:wrap;gap:10px;padding:12px 5vw;
+  background:rgba(8,86,52,.62);backdrop-filter:saturate(1.5) blur(14px);-webkit-backdrop-filter:saturate(1.5) blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.2);animation:pt-down .6s var(--ease) backwards}
+.portal .brand{font-family:var(--head);font-weight:800;letter-spacing:-.02em;color:#fff}
+.portal .mark{background:radial-gradient(circle at 35% 30%,#fff6c2,#f2bd2c 55%,#d9a00f);box-shadow:none;animation:pt-ping 2.2s ease-out infinite}
+.portal .navr{gap:8px;flex-wrap:wrap}
+.portal .navr a{padding:8px 14px;border-radius:999px;color:#fff;font-weight:600;text-decoration:none;
+  transition:background .2s,color .2s,transform .25s var(--ease)}
+.portal .navr a:hover{background:var(--sun);color:#0a3d28;text-decoration:none;transform:translateY(-1px)}
+.portal .navr .btn{padding:8px 16px;font-size:.85rem}
+
+/* ---------- page heading ---------- */
+.portal .dash{position:relative;padding:46px 5vw 80px}
+.portal .eyebrow{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.32);color:var(--sun);font-size:.72rem;letter-spacing:.12em;margin-bottom:14px}
+.portal .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--sun);animation:pt-ping 1.8s ease-out infinite}
+.portal .dash h1{font-family:var(--head);font-size:clamp(2rem,4.4vw,3rem);font-weight:800;letter-spacing:-.035em;line-height:1.1;margin:0 0 10px;padding-bottom:.08em;
+  background:linear-gradient(100deg,#fff 0%,#fff7b8 55%,#f7d54a 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.portal .sub,.portal .tip{color:var(--onbg)}
+
+/* ---------- entrance animation (same feel as the OTP step) ---------- */
+.portal .dash>*{animation:pt-up .6s var(--ease) backwards}
+.portal .dash>*:nth-child(2){animation-delay:.05s}.portal .dash>*:nth-child(3){animation-delay:.1s}
+.portal .dash>*:nth-child(4){animation-delay:.15s}.portal .dash>*:nth-child(5){animation-delay:.2s}
+.portal .dash>*:nth-child(n+6){animation-delay:.25s}
+.portal :is(.cats,.stats,.pk,.meters,.rq,.list)>*{animation:pt-up-s .5s var(--ease) backwards}
+.portal :is(.cats,.stats,.pk,.meters,.rq,.list)>*:nth-child(2){animation-delay:.06s}
+.portal :is(.cats,.stats,.pk,.meters,.rq,.list)>*:nth-child(3){animation-delay:.12s}
+.portal :is(.cats,.stats,.pk,.meters,.rq,.list)>*:nth-child(4){animation-delay:.18s}
+.portal :is(.cats,.stats,.pk,.meters,.rq,.list)>*:nth-child(5){animation-delay:.24s}
+.portal :is(.cats,.stats,.pk,.meters,.rq,.list)>*:nth-child(6){animation-delay:.3s}
+.portal :is(.cats,.stats,.pk,.meters,.rq,.list)>*:nth-child(n+7){animation-delay:.36s}
+
+/* ---------- balance card (yellow, pops on green) ---------- */
+.portal .box.balance{position:relative;display:block;max-width:430px;min-width:260px;margin:26px 0 6px;padding:24px 28px;border:0;border-radius:24px;overflow:hidden;color:#0a3d28;
+  background:radial-gradient(160px 160px at 0% 0%,rgba(255,255,255,.55),transparent 70%),linear-gradient(135deg,#ffe98a 0%,#f7d54a 50%,#f0b520 100%);
+  box-shadow:0 24px 46px -18px rgba(4,40,24,.7),0 0 0 1px rgba(255,255,255,.35) inset}
+.portal .box.balance:hover{transform:none;box-shadow:0 28px 52px -18px rgba(4,40,24,.75),0 0 0 1px rgba(255,255,255,.35) inset}
+.portal .box.balance h3{color:#6b4c00}
+.portal .box.balance .big{font-family:var(--head);font-size:3.1rem;font-weight:800;color:#0a3d28;-webkit-text-fill-color:#0a3d28;background:none}
+.portal .box.balance .big small{color:#6b4c00;-webkit-text-fill-color:#6b4c00}
+.portal .box.balance::after{content:"";position:absolute;right:-34px;bottom:-44px;width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#3fbf63,#14803f 55%,#0a5233);box-shadow:inset 0 0 0 14px rgba(255,255,255,.2);
+  animation:pt-float 4.5s ease-in-out infinite}
+
+/* ---------- cards / stat boxes ---------- */
+.portal .box{color:var(--ink);background:var(--card);border:1px solid var(--card-b);border-radius:20px;box-shadow:var(--shadow);
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s}
+.portal .box:hover{transform:translateY(-3px);border-color:var(--sun);box-shadow:0 22px 40px -18px rgba(4,40,24,.6),0 0 0 4px rgba(247,213,74,.45)}
+.portal .box h3{color:var(--mut)}
+.portal .box.warn{background:linear-gradient(135deg,#fff6c9,#ffe98a);border-color:#f0cf5a}
+.portal .stats .big,.portal .grid .big{font-family:var(--head);font-weight:800;background:linear-gradient(100deg,#0a4a30,#2a9d46);-webkit-background-clip:text;background-clip:text;color:transparent}
+.portal .big small{background:none;-webkit-text-fill-color:currentColor}
+.portal :is(.box,.result,.codebox,.handover,.tbl) :is(.sub,.tip){color:var(--mut)}
+
+/* ---------- tabs (pill switcher) ---------- */
+.portal .tabs{display:inline-flex;max-width:100%;gap:4px;padding:5px;margin:24px 0 26px;border:1px solid rgba(255,255,255,.25);border-radius:999px;
+  background:rgba(6,70,42,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--shadow);overflow-x:auto;scrollbar-width:none}
+.portal .tabs::-webkit-scrollbar{display:none}
+.portal .tab{padding:10px 18px;border:0;border-radius:999px;font-size:.9rem;color:#e6f7cc;transition:color .25s,background .25s,box-shadow .3s,transform .25s var(--ease)}
+.portal .tab:hover{color:#fff;background:rgba(255,255,255,.16)}
+.portal .tab.on{color:#0a3d28;background:linear-gradient(135deg,#ffe98a,#f2bd2c);box-shadow:0 8px 18px -8px rgba(0,0,0,.45);animation:pt-pop .35s var(--ease)}
+.portal .tab:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+/* ---------- buttons (yellow = high contrast on green) ---------- */
+.portal .btn{position:relative;overflow:hidden;border:1px solid transparent;border-radius:12px;color:#0a3d28;
+  background:linear-gradient(135deg,#ffe98a 0%,#f7d54a 55%,#f2bd2c 100%);box-shadow:0 10px 22px -10px rgba(4,40,24,.7);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s}
+.portal .btn::after{content:"";position:absolute;inset:0;pointer-events:none;transform:translateX(-120%);
+  background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.7) 50%,transparent 65%);transition:transform .7s var(--ease)}
+.portal .btn:hover:not(:disabled){background:linear-gradient(135deg,#fff1a8 0%,#ffe061 55%,#f7c836 100%);transform:translateY(-2px);
+  box-shadow:0 14px 28px -10px rgba(4,40,24,.75),0 0 0 4px rgba(255,255,255,.35)}
+.portal .btn:hover:not(:disabled)::after{transform:translateX(120%)}
+.portal .btn:active:not(:disabled){transform:translateY(0) scale(.98)}
+.portal .btn:disabled{box-shadow:none;filter:grayscale(.3)}
+.portal .btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.portal .btn .spin{border-color:rgba(10,61,40,.28);border-top-color:#0a3d28}
+.portal .btn.line{background:rgba(255,255,255,.95);color:var(--g);border-color:rgba(255,255,255,.6);box-shadow:none}
+.portal .btn.line:hover:not(:disabled){background:#fff6cc;border-color:#e6c13f;box-shadow:0 10px 20px -12px rgba(4,40,24,.6)}
+.portal .link{color:var(--g)}.portal .link:hover:not(:disabled){text-decoration:underline}
+
+/* ---------- inputs (yellow focus glow, like the OTP boxes) ---------- */
+.portal .field input[type=text],.portal .field input[type=number],.portal .field input[type=tel],
+.portal .sel,.portal .verify input,.portal .rv input{background:#fffdf2;border:1px solid var(--line);border-radius:12px;
+  transition:border-color .2s,box-shadow .25s,background .2s}
+.portal .field input:focus,.portal .sel:focus,.portal .verify input:focus,.portal .rv input:focus{border-color:var(--sun);background:#fff;outline:none;box-shadow:0 0 0 4px rgba(247,213,74,.6)}
+.portal .field label{color:#fff}
+.portal .box .field label{color:var(--ink)}
+
+/* ---------- section titles ---------- */
+.portal .step{display:flex;align-items:center;gap:10px;font-family:var(--head);color:var(--sun);font-weight:700}
+.portal .step::before{content:"";width:20px;height:4px;border-radius:4px;background:linear-gradient(90deg,#fff,var(--sun))}
+
+/* ---------- category tiles ---------- */
+.portal .cat{color:var(--ink);background:var(--card);border:1px solid var(--card-b);border-radius:16px;box-shadow:var(--shadow);
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s,background .3s}
+.portal .cat span{color:var(--mut)}
+.portal .cat:hover{transform:translateY(-3px);background:#fff;border-color:var(--sun)}
+.portal .cat.on{transform:translateY(-2px);border-color:var(--sun);background:linear-gradient(145deg,#fff8cf,#ffe98a);box-shadow:0 0 0 4px rgba(247,213,74,.6),var(--shadow)}
+.portal .cat.on::after{content:"✓";position:absolute;right:12px;bottom:10px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  background:var(--g);color:#fff;font-size:.74rem;font-weight:800;animation:pt-pop .35s var(--ease)}
+.portal .cat:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.portal .cat em{padding:2px 9px;border-radius:999px;background:var(--g);color:#fff;font-weight:800;font-size:.76rem}
+
+/* ---------- photo drop zone ---------- */
+.portal .drop{align-content:center;border:2px dashed rgba(255,255,255,.6);border-radius:20px;color:#fff;font-weight:600;
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.10) 0 12px,rgba(255,255,255,.03) 12px 24px);
+  transition:transform .3s var(--ease),border-color .3s,box-shadow .3s}
+.portal .drop:hover{transform:translateY(-2px);border-color:var(--sun);box-shadow:var(--shadow)}
+.portal .drop:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.portal .drop:not(.has)::before{content:"+";display:grid;place-items:center;width:56px;height:56px;margin-bottom:10px;border-radius:50%;
+  background:linear-gradient(135deg,#ffe98a,#f2bd2c);color:#0a3d28;font:700 1.9rem/1 var(--head);animation:pt-ping 2s ease-out infinite}
+.portal .drop.has{border-style:solid;border-color:var(--sun)}
+.portal .drop img{background:#eaf5d3}
+.portal .rv img{background:#eaf5d3}
+
+/* ---------- progress meters ---------- */
+.portal .meter .mt{color:var(--onbg)}.portal .meter .mt b{color:#fff}
+.portal .meter i{height:8px;background:rgba(255,255,255,.25)}
+.portal .meter u{position:relative;overflow:hidden;transform-origin:left;background:linear-gradient(90deg,#c6e24a,#f7d54a 70%,#ffe98a);animation:pt-grow 1s var(--ease) backwards}
+.portal .meter u::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);transform:translateX(-100%);animation:pt-sheen 2.6s 1s ease-in-out infinite}
+.portal .tbl .meter .mt{color:var(--mut)}.portal .tbl .meter .mt b{color:var(--ink)}
+.portal .tbl .meter i{background:rgba(15,107,66,.15)}
+.portal .tbl .meter u{background:linear-gradient(90deg,#2a9d46,#c6e24a 75%,#f7d54a)}
+
+/* ---------- result / messages ---------- */
+.portal .result{color:var(--ink);border-radius:22px;padding:26px;box-shadow:var(--shadow);animation:pt-pop .5s var(--ease)}
+.portal .result h3{font-family:var(--head)}
+.portal .result.APPROVED{background:linear-gradient(145deg,#f1fbd6,#fff3b4);border-color:#d6e98a}
+.portal .result.REJECTED{background:linear-gradient(145deg,#fff1ef,#fffaf9);border-color:#f0cbc7}
+.portal .result.REVIEW{background:linear-gradient(145deg,#fff8dc,#ffeaa0);border-color:#ecd48f}
+.portal .err{border-radius:12px;animation:pt-shake .45s var(--ease)}
+.portal .okmsg{border-radius:12px;background:linear-gradient(135deg,#eafacd,#fff4bf);border-color:#c5e285;color:#1d5a14;animation:pt-pop .4s var(--ease)}
+.portal .dev{border-radius:12px;background:#fff7d6}
+
+/* ---------- code boxes ---------- */
+.portal .codebox{color:var(--ink);border:2px solid transparent;border-radius:22px;padding:26px;
+  background:linear-gradient(#fffbe8,#fffbe8) padding-box,linear-gradient(120deg,#2a9d46,#f2bd2c,#c6e24a,#2a9d46) border-box;background-size:auto,300% 300%;
+  box-shadow:0 20px 40px -20px rgba(4,40,24,.7);animation:pt-pop .5s var(--ease),pt-flow 5s ease-in-out infinite alternate}
+.portal .codebox small{color:var(--mut)}
+.portal .code{color:var(--g);text-shadow:0 0 22px rgba(247,213,74,.8)}
+.portal .handover{border:1.5px dashed var(--leaf);border-radius:14px;background:rgba(247,213,74,.25)}
+
+/* ---------- pickup tracker ---------- */
+.portal .track i{height:6px;background:rgba(15,107,66,.15)}
+.portal .track li.done i{background:linear-gradient(90deg,#1b8a47,#6fbf3a)}
+.portal .track li.now i{background:linear-gradient(90deg,#f2bd2c,#ffe27a,#f2bd2c);background-size:200% 100%;animation:pt-slide 1.4s linear infinite}
+.portal .track li.done{color:var(--g)}
+
+/* ---------- status chips ---------- */
+.portal .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border:1px solid transparent}
+.portal .chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.portal .chip.APPROVED,.portal .chip.REDEEMED,.portal .chip.PENDING{background:#e1f5c4;color:#1f5d12;border-color:#c7e79b}
+.portal .chip.REJECTED,.portal .chip.EXPIRED{background:#fde8e4;color:#a3231a;border-color:#f4c7c3}
+.portal .chip.REVIEW{background:#fff0b8;color:#6b4c00;border-color:#ecd48f}
+
+/* ---------- lists & tables ---------- */
+.portal .list li,.portal .list li:last-child{color:var(--ink);margin-bottom:8px;padding:14px 16px;border:1px solid var(--card-b);border-radius:14px;background:var(--card);box-shadow:0 8px 18px -14px rgba(4,40,24,.6);
+  transition:transform .3s var(--ease),background .25s,border-color .25s,box-shadow .3s}
+.portal .list li:hover{transform:translateX(4px);background:#fff;border-color:var(--sun);box-shadow:0 12px 24px -14px rgba(4,40,24,.7)}
+.portal .pos{color:#1b8a47}
+.portal .tbl{color:var(--ink);background:var(--card);border:1px solid var(--card-b);border-radius:20px;box-shadow:var(--shadow)}
+.portal .tbl th{background:linear-gradient(180deg,#fff6c9,#ffeaa0);color:#5b4a10}
+.portal .tbl td{border-top:1px solid rgba(15,107,66,.12)}
+.portal .tbl tbody tr{transition:background .2s}
+.portal .tbl tbody tr:hover{background:rgba(247,213,74,.28)}
+
+/* ---------- keyframes ---------- */
+@keyframes pt-up{from{opacity:0;transform:translateY(16px)}}
+@keyframes pt-up-s{from{opacity:0;transform:translateY(10px) scale(.98)}}
+@keyframes pt-down{from{opacity:0;transform:translateY(-14px)}}
+@keyframes pt-pop{0%{opacity:0;transform:scale(.94)}60%{transform:scale(1.02)}100%{opacity:1;transform:scale(1)}}
+@keyframes pt-ping{0%{box-shadow:0 0 0 0 rgba(242,189,44,.6)}100%{box-shadow:0 0 0 12px rgba(242,189,44,0)}}
+@keyframes pt-drift{to{transform:translate3d(3%,2%,0) rotate(4deg) scale(1.06)}}
+@keyframes pt-float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(6deg)}}
+@keyframes pt-grow{from{transform:scaleX(0)}}
+@keyframes pt-sheen{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+@keyframes pt-flow{from{background-position:0 0,0% 50%}to{background-position:0 0,100% 50%}}
+@keyframes pt-slide{to{background-position:-200% 0}}
+@keyframes pt-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}55%{transform:translateX(5px)}80%{transform:translateX(-3px)}}
+
+/* ---------- small screens ---------- */
+@media(max-width:640px){
+  .portal .top{padding:10px 16px}
+  .portal .navr{gap:4px;font-size:.82rem}.portal .navr a{padding:6px 10px}
+  .portal .dash{padding:30px 16px 60px}
+  .portal .box.balance{max-width:none;padding:22px 22px}
+  .portal .box.balance::after{width:110px;height:110px;right:-26px;bottom:-34px}
+  .portal .box.balance .big{font-size:2.7rem}
+  .portal .tabs{display:flex}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .portal,.portal *,.portal *::before,.portal *::after,.portal::before,.portal::after{animation:none!important;transition:none!important}
+}

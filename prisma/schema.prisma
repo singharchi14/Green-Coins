@@ -1,0 +1,181 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  CITIZEN
+  ADMIN
+  MUNICIPAL
+  WORKER
+}
+
+enum SubStatus {
+  APPROVED
+  REJECTED
+  REVIEW
+}
+
+enum ShopStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum RedStatus {
+  PENDING
+  REDEEMED
+  EXPIRED
+}
+
+enum TxKind {
+  EARN
+  REDEEM
+  REFUND
+}
+
+enum PickupStatus {
+  REQUESTED
+  ASSIGNED
+  COLLECTED
+  VERIFIED
+  CANCELLED
+}
+
+model User {
+  id          String       @id @default(uuid())
+  phone       String?      @unique
+  email       String?      @unique
+  googleId    String?      @unique
+  name        String
+  city        String       @default("Nawanshahr")
+  locality    String       @default("General")
+  role        Role         @default(CITIZEN)
+  coins       Int          @default(0)
+  createdAt   DateTime     @default(now())
+  submissions Submission[]
+  txns        CoinTxn[]
+  redemptions Redemption[]
+  shop        Shop?
+  pickups     Pickup[]  @relation("PickupCitizen")
+  assigned    Pickup[]  @relation("PickupWorker")
+}
+
+model Otp {
+  phone      String     @id
+  purpose    String
+  hash       String
+  expiresAt  DateTime
+  attempts   Int        @default(0)
+  lastSentAt DateTime
+  sends      DateTime[]
+  profile    Json?
+}
+
+// One row per photo. Only the SHA-256 fingerprint is kept for duplicate checks.
+// imageData exists ONLY while a photo waits for human review and is wiped on decision.
+model Submission {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  category   String
+  status     SubStatus
+  coins      Int       @default(0)
+  confidence Float?
+  reason     String?
+  imageHash  String    @unique
+  imageData  Bytes?
+  mime       String?
+  createdAt  DateTime  @default(now())
+  decidedAt  DateTime?
+  decidedBy  String?
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+// Append-only ledger. User.coins is a cached total updated in the same DB transaction.
+model CoinTxn {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  delta     Int
+  kind      TxKind
+  refId     String?
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model Shop {
+  id          String       @id @default(uuid())
+  ownerId     String       @unique
+  owner       User         @relation(fields: [ownerId], references: [id])
+  name        String
+  ownerName   String
+  phone       String
+  address     String
+  licence     String
+  status      ShopStatus   @default(PENDING)
+  offerText   String       @default("")
+  coinCost    Int          @default(20)
+  dailyLimit  Int          @default(20)
+  paused      Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  redemptions Redemption[]
+}
+
+model Redemption {
+  id         String    @id @default(uuid())
+  code       String    @unique
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  shopId     String
+  shop       Shop      @relation(fields: [shopId], references: [id])
+  coins      Int
+  status     RedStatus @default(PENDING)
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  redeemedAt DateTime?
+
+  @@index([userId, createdAt])
+  @@index([shopId, createdAt])
+}
+
+// Doorstep collection of segregated waste.
+// REQUESTED -> ASSIGNED (municipal officer picks a worker) -> COLLECTED (worker weighs it and enters the
+// citizen's handover code) -> VERIFIED (citizen confirms, or an officer verifies) -> coins credited once.
+// city/locality are copied from the citizen at request time so analytics stay correct if they move.
+model Pickup {
+  id           String       @id @default(uuid())
+  userId       String
+  user         User         @relation("PickupCitizen", fields: [userId], references: [id])
+  category     String
+  estKg        Float
+  preferredDay DateTime     // start of the chosen day in IST
+  note         String?
+  city         String
+  locality     String
+  handoverCode String
+  status       PickupStatus @default(REQUESTED)
+  workerId     String?
+  worker       User?        @relation("PickupWorker", fields: [workerId], references: [id])
+  assignedAt   DateTime?
+  collectedAt  DateTime?
+  collectedKg  Float?
+  verifiedAt   DateTime?
+  verifiedBy   String?      // user id of the citizen or officer who verified
+  coins        Int          @default(0)
+  createdAt    DateTime     @default(now())
+
+  @@index([userId, createdAt])
+  @@index([status, preferredDay])
+  @@index([workerId, status])
+  @@index([city, locality])
+}
